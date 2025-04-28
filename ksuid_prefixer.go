@@ -10,13 +10,15 @@ import (
 // KSUIDPrefixer implements IDPrefixer for KSUID IDs
 type KSUIDPrefixer struct{}
 
-// Prefix adds a prefix to a KSUID ID
-func (p KSUIDPrefixer) Prefix(prefix string, id ksuid.KSUID) string {
+var _ IDPrefixer[ksuid.KSUID] = KSUIDPrefixer{}
+
+// Attach attaches a prefix to a KSUID ID
+func (p KSUIDPrefixer) Attach(prefix string, id ksuid.KSUID) string {
 	return fmt.Sprintf("%s_%s", prefix, id.String())
 }
 
-// Unprefix removes the prefix from a prefixed ID string
-func (p KSUIDPrefixer) Unprefix(prefix string, prefixedID string) (string, bool) {
+// Detach detaches a prefix from a prefixed ID string
+func (p KSUIDPrefixer) Detach(prefix string, prefixedID string) (string, bool) {
 	expectedPrefix := fmt.Sprintf("%s_", prefix)
 	if strings.HasPrefix(prefixedID, expectedPrefix) {
 		return strings.TrimPrefix(prefixedID, expectedPrefix), true

@@ -7,8 +7,11 @@ import (
 
 // Generic IDPrefixer interface
 type IDPrefixer[T any] interface {
-	Prefix(prefix string, id T) string
-	Unprefix(prefix string, prefixedID string) (string, bool)
+	// Attach attaches a prefix to an ID
+	Attach(prefix string, id T) string
+	// Detach detaches a prefix from a prefixed ID
+	Detach(prefix string, prefixedID string) (string, bool)
+	// Parse parses a string into an ID
 	Parse(s string) (T, error)
 }
 
@@ -70,7 +73,7 @@ func (r *Registry[T]) PrefixID(entityType string, id T) (string, error) {
 		return "", fmt.Errorf("no prefixer registered for entity type: %s", entityType)
 	}
 
-	return prefixer.Prefix(prefix, id), nil
+	return prefixer.Attach(prefix, id), nil
 }
 
 // ParsePrefixedID attempts to parse a prefixed ID string for a given entity type
@@ -90,7 +93,7 @@ func (r *Registry[T]) ParsePrefixedID(entityType, prefixedID string) (T, error) 
 		return zero, fmt.Errorf("no prefixer registered for entity type: %s", entityType)
 	}
 
-	rawStr, ok := prefixer.Unprefix(prefix, prefixedID)
+	rawStr, ok := prefixer.Detach(prefix, prefixedID)
 	if !ok {
 		return zero, fmt.Errorf("invalid prefix format for entity type: %s", entityType)
 	}
@@ -105,7 +108,7 @@ func (r *Registry[T]) MatchPrefix(prefixedID string) (string, string, bool) {
 
 	for entityType, prefix := range r.prefixes {
 		prefixer := r.prefixers[entityType]
-		if rawStr, ok := prefixer.Unprefix(prefix, prefixedID); ok {
+		if rawStr, ok := prefixer.Detach(prefix, prefixedID); ok {
 			return entityType, rawStr, true
 		}
 	}

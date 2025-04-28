@@ -10,13 +10,15 @@ import (
 // UUIDPrefixer implements IDPrefixer for UUID IDs
 type UUIDPrefixer struct{}
 
-// Prefix adds a prefix to a UUID ID
-func (p UUIDPrefixer) Prefix(prefix string, id uuid.UUID) string {
+var _ IDPrefixer[uuid.UUID] = UUIDPrefixer{}
+
+// Attach attaches a prefix to a UUID ID
+func (p UUIDPrefixer) Attach(prefix string, id uuid.UUID) string {
 	return fmt.Sprintf("%s_%s", prefix, id.String())
 }
 
-// Unprefix removes the prefix from a prefixed ID string
-func (p UUIDPrefixer) Unprefix(prefix string, prefixedID string) (string, bool) {
+// Detach detaches a prefix from a prefixed ID string
+func (p UUIDPrefixer) Detach(prefix string, prefixedID string) (string, bool) {
 	expectedPrefix := fmt.Sprintf("%s_", prefix)
 	if strings.HasPrefix(prefixedID, expectedPrefix) {
 		return strings.TrimPrefix(prefixedID, expectedPrefix), true

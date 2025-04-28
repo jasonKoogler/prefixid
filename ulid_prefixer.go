@@ -10,13 +10,15 @@ import (
 // ULIDPrefixer implements IDPrefixer for ULID IDs
 type ULIDPrefixer struct{}
 
-// Prefix adds a prefix to a ULID ID
-func (p ULIDPrefixer) Prefix(prefix string, id ulid.ULID) string {
+var _ IDPrefixer[ulid.ULID] = ULIDPrefixer{}
+
+// Attach attaches a prefix to a ULID ID
+func (p ULIDPrefixer) Attach(prefix string, id ulid.ULID) string {
 	return fmt.Sprintf("%s_%s", prefix, id.String())
 }
 
-// Unprefix removes the prefix from a prefixed ID string
-func (p ULIDPrefixer) Unprefix(prefix string, prefixedID string) (string, bool) {
+// Detach detaches a prefix from a prefixed ID string
+func (p ULIDPrefixer) Detach(prefix string, prefixedID string) (string, bool) {
 	expectedPrefix := fmt.Sprintf("%s_", prefix)
 	if strings.HasPrefix(prefixedID, expectedPrefix) {
 		return strings.TrimPrefix(prefixedID, expectedPrefix), true

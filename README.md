@@ -163,11 +163,58 @@ You can implement the `IDPrefixer` interface for any custom ID type:
 
 ```go
 type IDPrefixer[T any] interface {
-    Prefix(prefix string, id T) string
-    Unprefix(prefix string, prefixedID string) (string, bool)
+    // Attach attaches a prefix to an ID
+    Attach(prefix string, id T) string
+    
+    // Detach detaches a prefix from a prefixed ID
+    Detach(prefix string, prefixedID string) (string, bool)
+    
+    // Parse parses a string into an ID
     Parse(s string) (T, error)
 }
 ```
+
+Example of a custom prefixer:
+
+```go
+// MyCustomPrefixer for a custom ID type
+type MyCustomPrefixer struct{}
+
+// Attach adds a prefix to a custom ID
+func (p MyCustomPrefixer) Attach(prefix string, id MyCustomID) string {
+    return fmt.Sprintf("%s:%s", prefix, id.String())
+}
+
+// Detach removes the prefix from a prefixed ID string
+func (p MyCustomPrefixer) Detach(prefix string, prefixedID string) (string, bool) {
+    expectedPrefix := fmt.Sprintf("%s:", prefix)
+    if strings.HasPrefix(prefixedID, expectedPrefix) {
+        return strings.TrimPrefix(prefixedID, expectedPrefix), true
+    }
+    return "", false
+}
+
+// Parse converts a string to a custom ID type
+func (p MyCustomPrefixer) Parse(s string) (MyCustomID, error) {
+    // Implementation for parsing the string to your custom ID type
+}
+```
+
+## Testing
+
+A comprehensive test suite is included and can be run with:
+
+```bash
+make test
+```
+
+For test coverage:
+
+```bash
+make cover
+```
+
+The tests are located in the `/tests` directory and provide examples of how to use each feature of the library.
 
 ## License
 
