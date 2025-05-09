@@ -1,5 +1,8 @@
 # prefixid
 
+> **⚠️ WARNING: This package is archived and no longer maintained.**  
+> Please use [github.com/kromacorp/prefixid](https://github.com/kromacorp/prefixid) instead.
+
 A Go library for managing prefixed IDs with type safety using generics.
 
 ## Features
