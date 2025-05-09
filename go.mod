@@ -11,6 +11,4 @@ require (
 )
 
 // Indicate that all versions are deprecated
-retract (
-	v0.0.0-00010101000000-000000000000/latest  // All versions retracted: Package is archived
-)
+retract v0.0.0-20000101000000-000000000000  // All versions retracted: Package is archived
